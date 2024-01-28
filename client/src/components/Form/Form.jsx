@@ -2,6 +2,10 @@ import { TextField, Button, Stack, Select, MenuItem, InputLabel, FormControl } f
 import { styled } from '@mui/system';
 import { useFormik } from 'formik';
 import { validationSchema } from '../../utils/validation';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import axios from "axios"
+
 
 const StyledForm = styled('form')({
   display: 'flex',
@@ -18,6 +22,7 @@ const StyledButton = styled(Button)({
 });
 
 const Form = () => {
+  const navigate = useNavigate()
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -28,8 +33,23 @@ const Form = () => {
       phone: '',
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
-      console.log('Form submitted:', values);
+    onSubmit: async (values) => {
+      try {
+        const { data } = await axios.post('/upload', { ...values })
+        if (data.success) {
+          toast.success(data.message, {
+            position: "top-center"
+          })
+          navigate('/table')
+
+        } else {
+          toast.error(data.message, {
+            position: "top-center"
+          })
+        }
+      } catch (error) {
+        console.error('Add Failed', error)
+      } 
     },
   });
 
@@ -111,7 +131,7 @@ const Form = () => {
           required
         />
         <StyledButton variant="contained" type="submit">
-          Register
+          Add
         </StyledButton>
       </Stack>
     </StyledForm>
