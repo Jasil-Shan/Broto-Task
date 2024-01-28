@@ -1,7 +1,7 @@
 
 const Table = () => {
   return (
-    
+    <h1>dhh</h1>
   )
 }
 
