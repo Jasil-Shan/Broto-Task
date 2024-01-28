@@ -1,13 +1,13 @@
 import express from "express"
-import { getStudents, updateStudent, uploadForm } from "../controller/formController"
+import { deleteStudent, getStudents, updateStudent, uploadForm } from "../controller/formController.js"
 
 
 const router = express.Router()
 
-router.post('/uploadForm',uploadForm)
+router.post('/upload',uploadForm)
 router.get('/getStudents',getStudents)
-router.put('/update/:id',updateStudent)
-router.delete('/delete/:id',updateStudent)
+router.put('/update/:_id',updateStudent)
+router.delete('/delete/:_id',deleteStudent)
 
 export default router
 

@@ -2,6 +2,7 @@ import express from "express"
 import cors from 'cors'
 import 'dotenv/config.js'
 import { dbConnect } from "./config/dbConnect.js"
+import userRouter from './routes/userRouter.js'
 
 
 const app = express()
@@ -17,13 +18,12 @@ app.use(
         credentials: true,
     }))
 
-app.use(express.json())
+app.use(express.json({}))
 app.use(express.urlencoded({ extended: true }))
 
-// app.use('/', userRouter)
+app.use('/', userRouter)
 
-const { PORT } = process.env
-app.listen(PORT, () => {
+app.listen(3000, () => {
     console.log(`Server listening on: 3000`);
 })
 

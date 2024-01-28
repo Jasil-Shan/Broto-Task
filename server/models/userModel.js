@@ -14,10 +14,6 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, "Your place is required"],
     },
-    gender: {
-        type: String,
-        required: [true, "Your Gender is required"],
-    },
     batch: {
         type: String,
         required: [true, "Your Batch is required"],
