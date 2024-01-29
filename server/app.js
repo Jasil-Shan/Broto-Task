@@ -13,7 +13,7 @@ dbConnect()
 app.use(
     cors({
         origin: [
-            "https://brototask.netlify.app",
+            "https://brototask.netlify.app/",
             "http://localhost:5000",
         ],
         credentials: true,
