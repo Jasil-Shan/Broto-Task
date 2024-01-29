@@ -14,6 +14,7 @@ app.use(
     cors({
         origin: [
             "http://localhost:5000",
+            "https://brototask.netlify.app/",
         ],
         credentials: true,
     }))

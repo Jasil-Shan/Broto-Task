@@ -6,7 +6,8 @@ import UserRouter from './routes/UserRouter';
 import './index.css'
 
 function App() {
-  axios.defaults.baseURL = "http://localhost:3000"
+  axios.defaults.baseURL = "http://brototask.comicworld.store"
+  // axios.defaults.baseURL = "http://localhost:3000"
   axios.defaults.withCredentials = true;
   return (
     <>
