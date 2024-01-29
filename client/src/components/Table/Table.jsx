@@ -1,6 +1,4 @@
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import SaveIcon from '@mui/icons-material/Save';
@@ -10,32 +8,38 @@ import {
     DataGrid,
     GridActionsCellItem,
     GridRowEditStopReasons,
+    GridToolbar,
 } from '@mui/x-data-grid';
 import { useState } from 'react';
 import axios from 'axios';
 import { useEffect } from 'react';
-import { Container } from '@mui/material';
+import { Button, Container, Paper, styled } from '@mui/material';
 import { toast } from 'react-toastify';
-
+import { useNavigate } from 'react-router-dom';
 
 function EditToolbar(props) {
     const { setRows, setRowModesModel } = props;
-
-    const handleClick = () => {
-        const id = randomId();
-        setRows((oldRows) => [...oldRows, { id, name: '', age: '', isNew: true }]);
-        setRowModesModel((oldModel) => ({
-            ...oldModel,
-            [id]: { mode: GridRowModes.Edit, fieldToFocus: 'name' },
-        }));
-    };
 }
+
+
+const StyledButton = styled(Button)({
+    backgroundColor: 'white',
+    color: 'black',
+    fontWeight: 600,               // Increased font weight
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)',  // Box shadow
+    marginBottom: '8px',          // Increased padding-bottom
+    '&:hover': {
+      backgroundColor: '#2196f3',  // Change to your desired hover background color
+      color: 'white',              // Change to your desired hover text color
+    },
+  });
 
 const Table = () => {
     const [rowModesModel, setRowModesModel] = useState({});
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(true);
     const [refresh, setRefresh] = useState(false);
+    const navigate = useNavigate()
 
     useEffect(() => {
         (async function () {
@@ -61,32 +65,9 @@ const Table = () => {
         setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.Edit } });
     };
 
-    // Inside your Tables component
-
-    const handleSaveClick = async (id) => {
-        try {
-            const editedRow = rows.find((row) => row._id === id);
-            console.log(editedRow);
-            const { data } = await axios.put(`/update/${id}`, editedRow);
-            if (data.success) {
-                setRows((prevRows) =>
-                    prevRows.map((row) => (row._id === id ? editedRow : row))
-                );
-                setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
-
-                toast.success(data.message, {
-                    position: "top-center"
-                });
-            } else {
-                toast.error(data.message, {
-                    position: "top-center"
-                });
-            }
-        } catch (error) {
-            console.error(error);
-        }
+    const handleSaveClick = (id) => () => {
+        setRowModesModel({ ...rowModesModel, [id]: { mode: GridRowModes.View } });
     };
-
 
     const handleDeleteClick = async (_id) => {
         try {
@@ -118,9 +99,23 @@ const Table = () => {
         }
     };
 
-    const processRowUpdate = (newRow) => {
+    const processRowUpdate = async (newRow) => {
         const updatedRow = { ...newRow, isNew: false };
         setRows(rows.map((row) => (row._id === newRow._id ? updatedRow : row)));
+        try {
+            const { data } = await axios.put(`/update/${newRow._id}`, { ...updatedRow })
+            if (data.success) {
+                toast.success(data.message, {
+                    position: "top-center"
+                })
+            } else {
+                toast.error(data.message, {
+                    position: "top-center"
+                })
+            }
+        } catch (error) {
+            console.error('Editing Failed', error)
+        }
         return updatedRow;
     };
 
@@ -153,7 +148,7 @@ const Table = () => {
                             sx={{
                                 color: 'primary.main',
                             }}
-                            onClick={() => handleSaveClick(id)}
+                            onClick={handleSaveClick(id)}
                         />,
                         <GridActionsCellItem
                             key={2}
@@ -195,6 +190,7 @@ const Table = () => {
             justifyContent: 'center',
             height: "100vh"
         }} >
+
             <Box
                 sx={{
                     height: 500,
@@ -205,29 +201,33 @@ const Table = () => {
                     '& .textPrimary': {
                         color: 'text.primary',
                     },
-                    alignItems:'center'
+                    alignItems: 'center'
                 }}
             >
-                <DataGrid
-                    rows={rows}
-                    columns={columns}
-                    editMode="row"
-                    getRowId={(row) => row._id}
-                    rowModesModel={rowModesModel}
-                    onRowModesModelChange={handleRowModesModelChange}
-                    onRowEditStop={handleRowEditStop}
-                    processRowUpdate={processRowUpdate}
-                    slots={{
-                        toolbar: EditToolbar,
-                    }}
-                    slotProps={{
-                        toolbar: { setRows, setRowModesModel },
-                    }}
-                />
+                <StyledButton onClick={()=>navigate('/')}>
+                    ADD NEW
+                </StyledButton>
+                <Paper elevation={3} sx={{ p: 2, borderRadius: 5, }}>
+                    <DataGrid
+                        rows={rows}
+                        columns={columns}
+                        editMode="row"
+                        getRowId={(row) => row._id}
+                        rowModesModel={rowModesModel}
+                        onRowModesModelChange={handleRowModesModelChange}
+                        onRowEditStop={handleRowEditStop}
+                        processRowUpdate={processRowUpdate}
+                        slots={{
+                            toolbar: GridToolbar
+                        }}
+                        slotProps={{
+                            toolbar: { setRows, setRowModesModel, showQuickFilter: true },
+                        }}
+                    />
+                </Paper>
             </Box>
         </Container>
     );
 }
-
 
 export default Table

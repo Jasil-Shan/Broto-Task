@@ -33,11 +33,11 @@ export async function updateStudent(req, res) {
 
         const { _id } = req.params
         console.log(req.body,'dgdh');
-        const user = await userModel.findByIdAndUpdate(_id, req.body, { new: true })
+        const user = await userModel.findByIdAndUpdate(_id, req.body)
         if (!user) {
             return res.json({ message: 'User not found' });
         }
-        return res.json({ success: true });
+        return res.json({ success: true, message: 'Updated Successfully'  });
 
     } catch (error) {
         res.json({ success: false, message: 'Network error' })

@@ -3,6 +3,7 @@ import axios from 'axios';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import UserRouter from './routes/UserRouter';
+import './index.css'
 
 function App() {
   axios.defaults.baseURL = "http://localhost:3000"
