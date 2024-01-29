@@ -217,13 +217,13 @@ const Table = () => {
                         onRowModesModelChange={handleRowModesModelChange}
                         onRowEditStop={handleRowEditStop}
                         processRowUpdate={processRowUpdate}
+                        pageSizeOptions={[5, 10,25]}
                         slots={{
                             toolbar: GridToolbar
                         }}
                         slotProps={{
                             toolbar: { setRows, setRowModesModel, showQuickFilter: true },
                         }}
-                        pageSizeOptions={[5, 10,25]}
                     />
                 </Paper>
             </Box>
