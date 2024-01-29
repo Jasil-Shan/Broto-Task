@@ -1,4 +1,4 @@
-import { TextField, Button, Stack, Select, MenuItem, InputLabel, FormControl, Container } from '@mui/material';
+import { TextField, Button, Stack, Select, MenuItem, InputLabel, FormControl, Container, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
 import { useFormik } from 'formik';
 import { validationSchema } from '../../utils/validation';
@@ -43,6 +43,7 @@ const Form = () => {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
+        formik.setSubmitting(true);
         const { data } = await axios.post('/upload', { ...values })
         if (data.success) {
           toast.success(data.message, {
@@ -57,6 +58,8 @@ const Form = () => {
         }
       } catch (error) {
         console.error('Add Failed', error)
+      }finally{
+        formik.setSubmitting(false);
       }
     },
   });
@@ -147,7 +150,7 @@ const Form = () => {
             required
           />
           <StyledButton variant="contained" type="submit">
-            Add
+          {formik.isSubmitting ? <CircularProgress size={22} color="success" /> : 'Add'}
           </StyledButton>
         </Stack>
       </StyledForm>
