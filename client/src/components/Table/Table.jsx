@@ -223,6 +223,7 @@ const Table = () => {
                         slotProps={{
                             toolbar: { setRows, setRowModesModel, showQuickFilter: true },
                         }}
+                        pageSizeOptions={[5, 10,25]}
                     />
                 </Paper>
             </Box>
