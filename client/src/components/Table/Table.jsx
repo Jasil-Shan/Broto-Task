@@ -25,12 +25,12 @@ function EditToolbar(props) {
 const StyledButton = styled(Button)({
     backgroundColor: 'white',
     color: 'black',
-    fontWeight: 600,               // Increased font weight
-    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)',  // Box shadow
-    marginBottom: '8px',          // Increased padding-bottom
+    fontWeight: 600,              
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)',  
+    marginBottom: '8px',         
     '&:hover': {
-      backgroundColor: '#2196f3',  // Change to your desired hover background color
-      color: 'white',              // Change to your desired hover text color
+      backgroundColor: '#2196f3', 
+      color: 'white',              
     },
   });
 
