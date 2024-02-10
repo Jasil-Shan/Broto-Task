@@ -4,8 +4,8 @@ import { deleteStudent, getStudents, updateStudent, uploadForm } from "../contro
 
 const router = express.Router()
 
-router.post('/upload',uploadForm)
 router.get('/getStudents',getStudents)
+router.post('/upload',uploadForm)
 router.put('/update/:_id',updateStudent)
 router.delete('/delete/:_id',deleteStudent)
 
