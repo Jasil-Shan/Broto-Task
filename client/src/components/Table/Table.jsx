@@ -17,10 +17,6 @@ import { Button, Container, Paper, styled } from '@mui/material';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
-function EditToolbar(props) {
-    const { setRows, setRowModesModel } = props;
-}
-
 
 const StyledButton = styled(Button)({
     backgroundColor: 'white',

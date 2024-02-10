@@ -1,7 +1,7 @@
 import { TextField, Button, Stack, Select, MenuItem, InputLabel, FormControl, Container, CircularProgress } from '@mui/material';
 import { styled } from '@mui/system';
 import { useFormik } from 'formik';
-import { validationSchema } from '../../utils/validation';
+import { validationSchema } from '../../utils/validation.js';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from "axios"
@@ -13,7 +13,7 @@ const StyledForm = styled('form')({
   margin: 'auto',
   justifyContent: 'center',
   backgroundColor: 'white',
-  alignItems:'center',
+  alignItems: 'center',
   padding: '26px',
   borderRadius: '12px',
   boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
@@ -58,7 +58,7 @@ const Form = () => {
         }
       } catch (error) {
         console.error('Add Failed', error)
-      }finally{
+      } finally {
         formik.setSubmitting(false);
       }
     },
@@ -84,6 +84,7 @@ const Form = () => {
             onChange={formik.handleChange}
             error={formik.touched.name && Boolean(formik.errors.name)}
             helperText={formik.touched.name && formik.errors.name}
+            FormHelperTextProps={{ style: { height: "1em" } }}
             required
           />
           <TextField
@@ -95,6 +96,7 @@ const Form = () => {
             onChange={formik.handleChange}
             error={formik.touched.email && Boolean(formik.errors.email)}
             helperText={formik.touched.email && formik.errors.email}
+            FormHelperTextProps={{ style: { height: "1em" } }}
             required
           />
           <TextField
@@ -106,6 +108,7 @@ const Form = () => {
             onChange={formik.handleChange}
             error={formik.touched.place && Boolean(formik.errors.place)}
             helperText={formik.touched.place && formik.errors.place}
+            FormHelperTextProps={{ style: { height: "1em" } }}
             required
           />
           <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
@@ -114,9 +117,12 @@ const Form = () => {
               labelId="batch-label"
               id="batch"
               name="batch"
+              label="Batch"
               value={formik.values.batch}
               onChange={formik.handleChange}
               error={formik.touched.batch && Boolean(formik.errors.batch)}
+              helperText={formik.touched.batch && formik.errors.batch}
+              FormHelperTextProps={{ style: { height: "1em" } }}
             >
               <MenuItem value={'BCK65'}>BCK65</MenuItem>
               <MenuItem value={'BCK66'}>BCK66</MenuItem>
@@ -129,9 +135,12 @@ const Form = () => {
               labelId="domain-label"
               id="domain"
               name="domain"
+              label="Domain"
               value={formik.values.domain}
               onChange={formik.handleChange}
               error={formik.touched.domain && Boolean(formik.errors.domain)}
+              helperText={formik.touched.domain && formik.errors.domain}
+              FormHelperTextProps={{ style: { height: "1em" } }}
             >
               <MenuItem value={'MERN'}>MERN</MenuItem>
               <MenuItem value={'MEAN'}>MEAN</MenuItem>
@@ -147,10 +156,11 @@ const Form = () => {
             onChange={formik.handleChange}
             error={formik.touched.phone && Boolean(formik.errors.phone)}
             helperText={formik.touched.phone && formik.errors.phone}
+            FormHelperTextProps={{ style: { height: "1em" } }}
             required
           />
           <StyledButton variant="contained" type="submit">
-          {formik.isSubmitting ? <CircularProgress size={22} color="success" /> : 'Add'}
+            {formik.isSubmitting ? <CircularProgress size={22} color="success" /> : 'Add'}
           </StyledButton>
         </Stack>
       </StyledForm>
