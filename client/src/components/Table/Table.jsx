@@ -16,19 +16,19 @@ import { useEffect } from 'react';
 import { Button, Container, Paper, styled } from '@mui/material';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-
+import Swal from 'sweetalert2'
 
 const StyledButton = styled(Button)({
     backgroundColor: 'white',
     color: 'black',
-    fontWeight: 600,              
-    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)',  
-    marginBottom: '8px',         
+    fontWeight: 600,
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)',
+    marginBottom: '8px',
     '&:hover': {
-      backgroundColor: '#2196f3', 
-      color: 'white',              
+        backgroundColor: '#2196f3',
+        color: 'white',
     },
-  });
+});
 
 const Table = () => {
     const [rowModesModel, setRowModesModel] = useState({});
@@ -46,7 +46,7 @@ const Table = () => {
             } catch (error) {
                 console.error(error);
             } finally {
-                setLoading(false);
+                setLoading(!loading);
             }
         })();
     }, [refresh]);
@@ -67,163 +67,178 @@ const Table = () => {
 
     const handleDeleteClick = async (_id) => {
         try {
-            const { data } = await axios.delete(`/delete/${_id}`)
-            if (data.success) {
-                toast.success(data.message, {
-                    position: "top-center"
-                })
-                setRefresh(!refresh)
-            } else {
-                toast.error(data.message, {
-                    position: "top-center"
-                })
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    const { data } = await axios.delete(`/delete/${_id}`)
+                    if (data.success) {
+                        setRefresh(!refresh)
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Your file has been deleted.",
+                            icon: "success"
+                        });
+                    } else {
+                        toast.error(data.message, {
+                            position: "top-center"
+                        })
+                    }
 
-    const handleCancelClick = (id) => () => {
-        setRowModesModel({
-            ...rowModesModel,
-            [id]: { mode: GridRowModes.View, ignoreModifications: true },
-        });
-
-        const editedRow = rows.find((row) => row._id === id);
-        if (editedRow.isNew) {
-            setRows(rows.filter((row) => row._id !== id));
-        }
-    };
-
-    const processRowUpdate = async (newRow) => {
-        const updatedRow = { ...newRow, isNew: false };
-        setRows(rows.map((row) => (row._id === newRow._id ? updatedRow : row)));
-        try {
-            const { data } = await axios.put(`/update/${newRow._id}`, { ...updatedRow })
-            if (data.success) {
-                toast.success(data.message, {
-                    position: "top-center"
-                })
-            } else {
-                toast.error(data.message, {
-                    position: "top-center"
-                })
-            }
-        } catch (error) {
-            console.error('Editing Failed', error)
-        }
-        return updatedRow;
-    };
-
-    const handleRowModesModelChange = (newRowModesModel) => {
-        setRowModesModel(newRowModesModel);
-    };
-
-    const columns = [
-        { field: 'name', headerName: 'Full Name', width: 160, editable: true },
-        { field: 'phone', headerName: 'Phone', width: 130, editable: true },
-        { field: 'email', headerName: 'Email', width: 200, editable: true },
-        { field: 'batch', headerName: 'Batch', width: 120, editable: true },
-        { field: 'domain', headerName: 'Domain', width: 120, editable: true },
-        { field: 'place', headerName: 'Place', width: 120, editable: true },
-        {
-            field: 'actions',
-            type: 'actions',
-            headerName: 'Actions',
-            width: 120,
-            cellClassName: 'actions',
-            getActions: ({ id }) => {
-                const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-
-                if (isInEditMode) {
-                    return [
-                        <GridActionsCellItem
-                            key={1}
-                            icon={<SaveIcon />}
-                            label="Save"
-                            sx={{
-                                color: 'primary.main',
-                            }}
-                            onClick={handleSaveClick(id)}
-                        />,
-                        <GridActionsCellItem
-                            key={2}
-                            icon={<CancelIcon />}
-                            label="Cancel"
-                            className="textPrimary"
-                            onClick={handleCancelClick(id)}
-                            color="inherit"
-                        />,
-                    ];
                 }
+            });
+        } catch (error) {
+        console.error(error);
+    }
+}
 
+const handleCancelClick = (id) => () => {
+    setRowModesModel({
+        ...rowModesModel,
+        [id]: { mode: GridRowModes.View, ignoreModifications: true },
+    });
+
+    const editedRow = rows.find((row) => row._id === id);
+    if (editedRow.isNew) {
+        setRows(rows.filter((row) => row._id !== id));
+    }
+};
+
+const processRowUpdate = async (newRow) => {
+    const updatedRow = { ...newRow, isNew: false };
+    setRows(rows.map((row) => (row._id === newRow._id ? updatedRow : row)));
+    try {
+        const { data } = await axios.put(`/update/${newRow._id}`, { ...updatedRow })
+        if (data.success) {
+            toast.success(data.message, {
+                position: "top-center"
+            })
+        } else {
+            toast.error(data.message, {
+                position: "top-center"
+            })
+        }
+    } catch (error) {
+        console.error('Editing Failed', error)
+    }
+    return updatedRow;
+};
+
+const handleRowModesModelChange = (newRowModesModel) => {
+    setRowModesModel(newRowModesModel);
+};
+
+const columns = [
+    { field: 'name', headerName: 'Full Name', width: 160, editable: true },
+    { field: 'phone', headerName: 'Phone', width: 130, editable: true },
+    { field: 'email', headerName: 'Email', width: 200, editable: true },
+    { field: 'batch', headerName: 'Batch', width: 120, editable: true },
+    { field: 'domain', headerName: 'Domain', width: 120, editable: true },
+    { field: 'place', headerName: 'Place', width: 120, editable: true },
+    {
+        field: 'actions',
+        type: 'actions',
+        headerName: 'Actions',
+        width: 120,
+        cellClassName: 'actions',
+        getActions: ({ id }) => {
+            const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
+
+            if (isInEditMode) {
                 return [
                     <GridActionsCellItem
                         key={1}
-                        icon={<EditIcon />}
-                        label="Edit"
-                        className="textPrimary"
-                        onClick={handleEditClick(id)}
-                        color="inherit"
+                        icon={<SaveIcon />}
+                        label="Save"
+                        sx={{
+                            color: 'primary.main',
+                        }}
+                        onClick={handleSaveClick(id)}
                     />,
                     <GridActionsCellItem
                         key={2}
-                        icon={<DeleteIcon />}
-                        label="Delete"
-                        onClick={() => handleDeleteClick(id)}
+                        icon={<CancelIcon />}
+                        label="Cancel"
+                        className="textPrimary"
+                        onClick={handleCancelClick(id)}
                         color="inherit"
                     />,
                 ];
-            },
+            }
+
+            return [
+                <GridActionsCellItem
+                    key={1}
+                    icon={<EditIcon />}
+                    label="Edit"
+                    className="textPrimary"
+                    onClick={handleEditClick(id)}
+                    color="inherit"
+                />,
+                <GridActionsCellItem
+                    key={2}
+                    icon={<DeleteIcon />}
+                    label="Delete"
+                    onClick={() => handleDeleteClick(id)}
+                    color="inherit"
+                />,
+            ];
         },
-    ];
+    },
+];
 
-    return (
-        <Container component="main" maxWidth="lg" sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: "100vh"
-        }} >
+return (
+    <Container component="main" maxWidth="lg" sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: "100vh"
+    }} >
 
-            <Box
-                sx={{
-                    height: 500,
-                    width: '100%',
-                    '& .actions': {
-                        color: 'text.secondary',
-                    },
-                    '& .textPrimary': {
-                        color: 'text.primary',
-                    },
-                    alignItems: 'center'
-                }}
-            >
-                <StyledButton onClick={()=>navigate('/')}>
-                    ADD NEW
-                </StyledButton>
-                <Paper elevation={3} sx={{ p: 2, borderRadius: 5, }}>
-                    <DataGrid
-                        rows={rows}
-                        columns={columns}
-                        editMode="row"
-                        getRowId={(row) => row._id}
-                        rowModesModel={rowModesModel}
-                        onRowModesModelChange={handleRowModesModelChange}
-                        onRowEditStop={handleRowEditStop}
-                        processRowUpdate={processRowUpdate}
-                        slots={{
-                            toolbar: GridToolbar
-                        }}
-                        slotProps={{
-                            toolbar: { setRows, setRowModesModel, showQuickFilter: true },
-                        }}
-                    />
-                </Paper>
-            </Box>
-        </Container>
-    );
+        <Box
+            sx={{
+                height: 500,
+                width: '100%',
+                '& .actions': {
+                    color: 'text.secondary',
+                },
+                '& .textPrimary': {
+                    color: 'text.primary',
+                },
+                alignItems: 'center'
+            }}
+        >
+            <StyledButton onClick={() => navigate('/')}>
+                ADD NEW
+            </StyledButton>
+            <Paper elevation={3} sx={{ p: 2, borderRadius: 5, }}>
+                <DataGrid
+                    rows={rows}
+                    columns={columns}
+                    editMode="row"
+                    getRowId={(row) => row._id}
+                    rowModesModel={rowModesModel}
+                    onRowModesModelChange={handleRowModesModelChange}
+                    onRowEditStop={handleRowEditStop}
+                    processRowUpdate={processRowUpdate}
+                    slots={{
+                        toolbar: GridToolbar
+                    }}
+                    slotProps={{
+                        toolbar: { setRows, setRowModesModel, showQuickFilter: true },
+                    }}
+                />
+            </Paper>
+        </Box>
+    </Container>
+);
 }
 
 export default Table
